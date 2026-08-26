@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I…Scream for Ice-Cream — A Cook with Sunil Show</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FFF7EC; --cream:#FDEFD8; --ink:#2B2320; --ink-soft:#6B5D54;
+    --coral:#C1440E; --coral-dark:#9E360A; --gold:#E8C468; --curry:#5B7553;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{background:#1a1512;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .stage{
+    position:relative;width:100vw;height:100vh;max-width:520px;max-height:920px;
+    background:var(--paper);overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.6);
+  }
+  @media(min-width:560px){.stage{border-radius:20px;height:92vh;}}
+
+  /* progress segments */
+  .progress{position:absolute;top:14px;left:14px;right:14px;z-index:40;display:flex;gap:5px;}
+  .seg{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.35);overflow:hidden;}
+  .seg .fill{height:100%;width:0;background:#fff;border-radius:3px;}
+  .seg.done .fill{width:100%;}
+
+  /* brand chip */
+  .brand{position:absolute;top:28px;left:16px;z-index:40;display:flex;align-items:center;gap:8px;color:#fff;
+    text-shadow:0 2px 8px rgba(0,0,0,.5);font-family:'Fraunces',serif;font-weight:600;font-size:15px;}
+  .brand .mk{width:26px;height:26px;border-radius:50%;background:var(--coral);display:flex;align-items:center;justify-content:center;font-size:13px;transform:rotate(-8deg);}
+
+  /* slides */
+  .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s ease;pointer-events:none;}
+  .slide.active{opacity:1;pointer-events:auto;}
+
+  /* photo layers with ken burns */
+  .photo{position:absolute;inset:0;overflow:hidden;background:#241d18;}
+  .photo img{width:100%;height:100%;object-fit:cover;transform:scale(1.02);}
+  .slide.active .photo img{animation:kb 8s ease-out forwards;}
+  @keyframes kb{from{transform:scale(1.02);}to{transform:scale(1.16);}}
+  .photo::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(20,15,12,.15) 0%,rgba(20,15,12,.05) 40%,rgba(20,15,12,.82) 100%);}
+  .imgfallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:120px;background:linear-gradient(135deg,#F4D8A0,#E8B060);}
+
+  /* caption block bottom */
+  .cap{position:absolute;left:0;right:0;bottom:0;z-index:30;padding:30px 26px 40px;color:#fff;}
+  .step-badge{display:inline-flex;align-items:center;gap:8px;background:var(--coral);color:#fff;
+    font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border-radius:100px;margin-bottom:14px;}
+  .cap p.instr{font-size:20px;line-height:1.5;font-weight:500;text-shadow:0 2px 12px rgba(0,0,0,.6);}
+  .cap .sub{font-size:14px;color:rgba(255,255,255,.85);margin-top:8px;}
+
+  /* intro / outro centered */
+  .center{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;color:#fff;}
+  .center .eyebrow{font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;text-shadow:0 2px 8px rgba(0,0,0,.6);}
+  .center h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(34px,9vw,52px);line-height:1.05;letter-spacing:-1px;text-shadow:0 3px 16px rgba(0,0,0,.6);}
+  .center .slogan{font-family:'Fraunces',serif;font-style:italic;font-size:20px;color:var(--gold);margin-top:14px;text-shadow:0 2px 10px rgba(0,0,0,.6);}
+  .center .cta{margin-top:20px;font-size:14px;color:rgba(255,255,255,.9);letter-spacing:.04em;}
+  .center .hint{position:absolute;bottom:36px;font-size:13px;color:rgba(255,255,255,.7);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+
+  /* ingredients slide */
+  .ing-panel{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;justify-content:center;padding:44px 34px;color:#fff;}
+  .ing-panel h2{font-family:'Fraunces',serif;font-size:30px;font-weight:600;margin-bottom:22px;text-shadow:0 2px 12px rgba(0,0,0,.6);}
+  .ing-panel ul{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .ing-panel li{font-size:16px;line-height:1.4;display:flex;align-items:flex-start;gap:10px;text-shadow:0 2px 10px rgba(0,0,0,.7);opacity:0;transform:translateX(-12px);animation:slidein .5s ease forwards;}
+  .ing-panel li.head{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--gold);text-transform:uppercase;letter-spacing:.05em;margin-top:8px;}
+  .ing-panel li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);flex:0 0 auto;margin-top:8px;}
+  .ing-panel li.head::before{display:none;}
+  @keyframes slidein{to{opacity:1;transform:translateX(0);}}
+
+  /* controls */
+  .controls{position:absolute;bottom:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:center;gap:18px;padding:14px;
+    background:linear-gradient(0deg,rgba(20,15,12,.5),transparent);opacity:0;transition:opacity .3s;}
+  .stage:hover .controls{opacity:1;}
+  .controls button{width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.92);color:var(--ink);
+    font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .2s;}
+  .controls button:hover{transform:scale(1.08);background:#fff;}
+  .controls .play{width:54px;height:54px;background:var(--coral);color:#fff;font-size:20px;}
+
+  /* tap zones for advancing */
+  .tapzone{position:absolute;top:60px;bottom:70px;width:32%;z-index:20;cursor:pointer;}
+  .tapzone.left{left:0;} .tapzone.right{right:0;}
+
+  .replay-note{position:absolute;top:50%;left:0;right:0;text-align:center;color:#fff;font-size:13px;opacity:0;z-index:35;pointer-events:none;}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="progress" id="progress"></div>
+  <div class="brand"><span class="mk">🍦</span> Cook with Sunil</div>
+
+  <div id="slides"></div>
+
+  <div class="tapzone left" id="tapLeft"></div>
+  <div class="tapzone right" id="tapRight"></div>
+
+  <div class="controls">
+    <button id="prev" aria-label="Previous">◀</button>
+    <button class="play" id="playpause" aria-label="Play or pause">⏸</button>
+    <button id="next" aria-label="Next">▶</button>
+  </div>
+</div>
+
+<script>
+const SLIDES = [{"type": "intro", "title": "I…Scream for Ice-Cream", "slogan": "Summer in a scoop.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgFw0wYeo3Sw2iEZyxGGr3tSj8_e7sImVb_Z_BEMBgULBhqzFp1XHIjA0QR-LkLG1fVpLxd50rUgfmRwkockPiO5MW8m3xWClStYhMVUKHw46kzNkJUn6xvJkQdDSr-ZBlwrnX8sAvw6Y0/s1600/20170427_085334.jpg"}, {"type": "ingredients", "title": "What you'll need", "items": ["**Ice Cream Base**", "Whipped cream – 1 cup", "Condensed milk – 1/2 cup", "**For Mango Ice Cream**", "1 crushed mango pulp", "1 mango chopped into pieces", "A pinch of yellow food colour (optional)", "**For Chocolate Ice Cream**", "Melted chocolate compound", "Choc chips as desired", "**For Vanilla Ice Cream**", "Vanilla essence – 1 tsp"], "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgFw0wYeo3Sw2iEZyxGGr3tSj8_e7sImVb_Z_BEMBgULBhqzFp1XHIjA0QR-LkLG1fVpLxd50rUgfmRwkockPiO5MW8m3xWClStYhMVUKHw46kzNkJUn6xvJkQdDSr-ZBlwrnX8sAvw6Y0/s1600/20170427_085334.jpg"}, {"type": "step", "num": 1, "total": 7, "text": "I've used whipping cream powder — to make cream from the powder, follow the instructions on the packet. You need two packets to prepare 1 cup of cream.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj0YJtfyv5obJDxIeA0doepTZVpx2V4qJCpmc3EKJAFUrqdo0Z03i7P6rOZrJ-QL-2sA1meXTVOKQk_o8N1thw0p3NOMuFBe3pUM_gEHAKnZeEFZVyU-TaHzVv_tkTAdXWXxQpl0p5KVUc/s1600/20170426_164459.jpg"}, {"type": "step", "num": 2, "total": 7, "text": "Take 100 ml of cold milk (5°C) per packet of whipping cream powder. Add the powder and milk and beat with a beater. An electric beater is preferable — 3–4 minutes — versus 10–15 minutes by hand. You can also use ready whipping cream from the market; in that case skip the milk and just beat the cream for 3–4 minutes until it thickens. Don't use Amul cream — it's thin, with 25% fat.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhy5ffOzH5jR1PlT58GkCUorXW-ZIRNqkd_0tvCOiasXNIcIZneSlLLfx70ZoghDCGwFhaGkAgPw-cD8qVdeepwKu-aRBLKhJrWhauyY1Svdxk-qQSj27XuisuOSRdKG-i1nSwpfN4G0tA/s1600/20170426_171006.jpg"}, {"type": "step", "num": 3, "total": 7, "text": "Once the cream becomes thick, add the condensed milk and beat again for 30 seconds. Your ice cream base is ready.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEixTl_FIunn5pSJC4SkysWV6fejQzD98R66-lDGO6hJTpHc6RM7OCFl06NT-9FkZW8Rlwodet8ZWCTPCvvqvw-F1eGIVU6hFxA9pLda_skAWXhTVeP6BrTuQmOhdXXwUYET0DvvqMj0gK0/s1600/20170426_171647.jpg"}, {"type": "step", "num": 4, "total": 7, "text": "Split the mixture into 3 different air-tight containers. In the first, add vanilla essence and mix well.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgFw0wYeo3Sw2iEZyxGGr3tSj8_e7sImVb_Z_BEMBgULBhqzFp1XHIjA0QR-LkLG1fVpLxd50rUgfmRwkockPiO5MW8m3xWClStYhMVUKHw46kzNkJUn6xvJkQdDSr-ZBlwrnX8sAvw6Y0/s1600/20170427_085334.jpg"}, {"type": "step", "num": 5, "total": 7, "text": "In the second container add mango pulp and mix well, then add mango pieces on top. For a more yellow colour, add a pinch of yellow food colour and mix well.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEha5ozPhRUpNR19llt7g9XJLZK-h4xNx5fE5dzmLGKowlS5x694lpBWJSvjJcP05VfrH-_56xdHDFR2gMNqHm534yN7006zEDU5gMraiDLDMZ8IkRVFXyW8UXECw8eD573cQrXkOgiG9go/s1600/20170426_171903.jpg"}, {"type": "step", "num": 6, "total": 7, "text": "For chocolate ice cream, take the third container and add the melted dark chocolate. Mix well, then sprinkle in loads of choc chips and mix again.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg7sgj6ooI1fVGrmUSb2_iovzzi1BpgDfe2EOKWB-SgcTWFvcBysTUbytipQMGM1I75Bb7YjOy96oBl9AeEwHAR0Ji5x4XgMTrBSsvuALtPmLN81IasnqhABdAl_F4u7PAz49CMG6_lBr0/s1600/20170426_172702.jpg"}, {"type": "step", "num": 7, "total": 7, "text": "Cover with an air-tight lid and keep in the refrigerator for 2 hours. After 2 hours, take a spoon or spatula and gently mix so that no crushed ice forms. Freeze again for 8–10 hours and your yummy ice cream is ready. The same way, you can make paan, sapota, or tender coconut — any flavour of your choice.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgltbs16vTImza-CEHd_Q3A6XbuE1dPh32oUPG7ZK3-2SwuZtp6WsyxEBSzOnqbYzOuPe1hSUI-gb88z4w_ahZctv5BFQX5apHiiGxs4c-kY65f_udLQe0GnmfzK8IVuyqjWSG_HMki5MA/s1600/20170426_173659.jpg"}, {"type": "outro", "title": "Your ice cream is ready!", "slogan": "Summer in a scoop.", "img": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgFw0wYeo3Sw2iEZyxGGr3tSj8_e7sImVb_Z_BEMBgULBhqzFp1XHIjA0QR-LkLG1fVpLxd50rUgfmRwkockPiO5MW8m3xWClStYhMVUKHw46kzNkJUn6xvJkQdDSr-ZBlwrnX8sAvw6Y0/s1600/20170427_085334.jpg", "cta": "Made with love — Cook with Sunil"}];
+const STEP_MS = 7000;
+let cur = 0, timer = null, playing = true, progTimer = null;
+
+const slidesEl = document.getElementById('slides');
+const progEl = document.getElementById('progress');
+
+function imgTag(src, cls){
+  return `<div class="${cls}"><img src="${src}" alt="" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('beforeend','<div class=\'imgfallback\'>🍦</div>')"><\/div>`;
+}
+
+// build slides
+SLIDES.forEach((s, i) => {
+  const el = document.createElement('div');
+  el.className = 'slide';
+  el.dataset.i = i;
+  let inner = '';
+  if(s.type === 'intro'){
+    inner = imgTag(s.img,'photo') +
+      `<div class="center"><div class="eyebrow">A Cook with Sunil Show</div>`+
+      `<h1>${s.title}<\/h1>`+
+      (s.slogan?`<div class="slogan">"${s.slogan}"<\/div>`:'')+
+      `<div class="hint">▶ playing… tap sides to skip<\/div><\/div>`;
+  } else if(s.type === 'ingredients'){
+    const lis = s.items.map((it,idx)=>{
+      const head = it.startsWith('**');
+      const txt = it.replace(/\*\*/g,'');
+      return `<li class="${head?'head':''}" style="animation-delay:${idx*0.08}s">${txt}<\/li>`;
+    }).join('');
+    inner = imgTag(s.img,'photo') + `<div class="ing-panel"><h2>${s.title}<\/h2><ul>${lis}<\/ul><\/div>`;
+  } else if(s.type === 'step'){
+    inner = imgTag(s.img,'photo') +
+      `<div class="cap"><span class="step-badge">Step ${s.num} of ${s.total}<\/span>`+
+      `<p class="instr">${s.text}<\/p><\/div>`;
+  } else if(s.type === 'outro'){
+    inner = imgTag(s.img,'photo') +
+      `<div class="center"><div class="eyebrow">Enjoy!</div><h1>${s.title}<\/h1>`+
+      (s.slogan?`<div class="slogan">"${s.slogan}"<\/div>`:'')+
+      `<div class="cta">${s.cta||''}<\/div>`+
+      `<div class="hint" id="replayHint">↻ tap to watch again<\/div><\/div>`;
+  }
+  el.innerHTML = inner;
+  slidesEl.appendChild(el);
+
+  const seg = document.createElement('div');
+  seg.className = 'seg';
+  seg.innerHTML = '<div class="fill"></div>';
+  progEl.appendChild(seg);
+});
+
+const slideEls = [...document.querySelectorAll('.slide')];
+const segEls = [...document.querySelectorAll('.seg')];
+
+function show(i){
+  cur = (i + SLIDES.length) % SLIDES.length;
+  slideEls.forEach((el,idx)=>el.classList.toggle('active', idx===cur));
+  segEls.forEach((seg,idx)=>{
+    seg.classList.toggle('done', idx<cur);
+    const f = seg.querySelector('.fill');
+    f.style.transition='none'; f.style.width = idx<cur?'100%':'0%';
+  });
+  if(playing) startTimer();
+}
+
+function startTimer(){
+  clearTimeout(timer);
+  const fill = segEls[cur].querySelector('.fill');
+  fill.style.transition='none'; fill.style.width='0%';
+  void fill.offsetWidth;
+  fill.style.transition=`width ${STEP_MS}ms linear`; fill.style.width='100%';
+  timer = setTimeout(()=>{
+    if(cur === SLIDES.length-1){ pause(); }
+    else next();
+  }, STEP_MS);
+}
+function next(){ show(cur+1); }
+function prev(){ show(cur-1); }
+function pause(){ playing=false; clearTimeout(timer);
+  const f=segEls[cur].querySelector('.fill'); f.style.transition='none'; f.style.width=getComputedStyle(f).width;
+  document.getElementById('playpause').textContent='▶'; }
+function play(){ playing=true; document.getElementById('playpause').textContent='⏸'; startTimer(); }
+
+document.getElementById('playpause').onclick = ()=> playing?pause():play();
+document.getElementById('next').onclick = ()=>{ next(); };
+document.getElementById('prev').onclick = ()=>{ prev(); };
+document.getElementById('tapRight').onclick = ()=>{ if(cur===SLIDES.length-1){show(0);play();}else next(); };
+document.getElementById('tapLeft').onclick = ()=> prev();
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight') next();
+  else if(e.key==='ArrowLeft') prev();
+  else if(e.key===' '){ e.preventDefault(); playing?pause():play(); }
+});
+
+show(0);
+</script>
+</body>
+</html>
